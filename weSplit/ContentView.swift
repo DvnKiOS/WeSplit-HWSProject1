@@ -8,9 +8,10 @@
 import SwiftUI // tells swift to import the swiftUI Framework
 
 struct ContentView: View { // -> Creates a new structure called contentview that is going to be forced to conform to the view protocol. View comes from SwiftUI and is needed if you want to put anything on screen.
-    @State private var checkAmount = 0.0
-    @State private var numberOfPeople = 2
-    @State private var tipPercentage = 20
+    @State private var checkAmount = 0.0 // we created a checkAmount variable and marked it with state so we can hold and detect when the value has been changed
+    @State private var numberOfPeople = 2  // same for this line , when the number of people has changed, the amount that we divide the final amount after the tip has been added will change too.
+    @State private var tipPercentage = 20 //we set and iniatl tip amout, the user can change this to allow for a larger or small tip to be factored into our calculations
+    
     
     @FocusState private var amountIsFocused: Bool
     
@@ -40,58 +41,67 @@ struct ContentView: View { // -> Creates a new structure called contentview that
     
     //since we want this value to be able to hold a vlaue we are going to mark it with state. a property wrapper that is going to allow us to hold a value within this particilar variable.
     var body: some View {
-        NavigationView {
-            Form {
-                Section {
-                    TextField("Amount", value: $checkAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                    .keyboardType(.decimalPad)
-                    .focused($amountIsFocused)
+        ZStack {
+            Color.red
+           
+            VStack {
+                NavigationView {
                     
-                    Picker("Number of people", selection:  $numberOfPeople) {
-                        ForEach (2..<100) {
-                            Text("\($0) people")
+                    
+                    Form {
+                        Section {
+                            TextField("Amount", value: $checkAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                            .keyboardType(.decimalPad)
+                            .focused($amountIsFocused)
+                            
+                            Picker("Number of people", selection:  $numberOfPeople) {
+                                ForEach (2..<100) {
+                                    Text("\($0) people")
+                                }
+                                
+                            }
+                            
+                            
+                        }
+                        Section {
+                            Picker("Tip Percentage", selection:  $tipPercentage) {
+                                ForEach(0..<101, id: \.self) {
+                                    Text($0, format: .percent)
+                                }
+                            }
+                        
+                        } header: {
+                            Text("How much tip do you want to leave")
+                            
+                                
                         }
                         
-                    }
-                    
-                    
-                }
-                Section {
-                    Picker("Tip Percentage", selection:  $tipPercentage) {
-                        ForEach(0..<101, id: \.self) {
-                            Text($0, format: .percent)
+                        Section {
+                            Text(checkTotal, format: .currency(code: Locale.current.identifier))
+                        } header: {
+                            Text("Grand Total")
+                        }
+                        Section {
+                            Text(totalPerPerson, format: .currency(code: Locale.current.identifier ))
+                        } header: {
+                            Text("Amount Per Person")
                         }
                     }
-                
-                } header: {
-                    Text("How much tip do you want to leave")
-                    
-                        
-                }
-                
-                Section {
-                    Text(checkTotal, format: .currency(code: Locale.current.identifier))
-                } header: {
-                    Text("Grand Total")
-                }
-                Section {
-                    Text(totalPerPerson, format: .currency(code: Locale.current.identifier ))
-                } header: {
-                    Text("Amount Per Person")
-                }
-            }
-            .navigationTitle("WeSplit")
-            .toolbar{
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    
-                    
-                    Button("Done") {
-                        amountIsFocused = false
+                    .navigationTitle("WeSplit")
+                    .toolbar{
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            
+                            
+                            Button("Done") {
+                                amountIsFocused = false
+                            }
+                        }
                     }
                 }
             }
         }
+        .ignoresSafeArea()
         
    
         
