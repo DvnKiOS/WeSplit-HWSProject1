@@ -12,6 +12,9 @@ struct ContentView: View { // -> Creates a new structure called contentview that
     @State private var numberOfPeople = 2  // same for this line , when the number of people has changed, the amount that we divide the final amount after the tip has been added will change too.
     @State private var tipPercentage = 20 //we set and iniatl tip amout, the user can change this to allow for a larger or small tip to be factored into our calculations
     
+    var isTipZero: Bool {
+        return tipPercentage == 0
+    }
     
     @FocusState private var amountIsFocused: Bool
     
@@ -63,13 +66,17 @@ struct ContentView: View { // -> Creates a new structure called contentview that
                             
                             
                         }
+                      
                         Section {
-                            Picker("Tip Percentage", selection:  $tipPercentage) {
-                                ForEach(0..<101, id: \.self) {
-                                    Text($0, format: .percent)
-                                }
-                            }
                         
+                            Picker("Tip Percentage", selection:  $tipPercentage) {
+                                ForEach(tipPercentages, id: \.self) {
+                                    Text($0, format: .percent)
+                                 
+                                }
+                                
+                            }
+                         
                         } header: {
                             Text("How much tip do you want to leave")
                             
@@ -78,8 +85,11 @@ struct ContentView: View { // -> Creates a new structure called contentview that
                         
                         Section {
                             Text(checkTotal, format: .currency(code: Locale.current.identifier))
+                            
+                                .foregroundColor(isTipZero ? .red : .black)
                         } header: {
                             Text("Grand Total")
+                               
                         }
                         Section {
                             Text(totalPerPerson, format: .currency(code: Locale.current.identifier ))
@@ -106,7 +116,9 @@ struct ContentView: View { // -> Creates a new structure called contentview that
    
         
     }
-}
+    
+    }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
